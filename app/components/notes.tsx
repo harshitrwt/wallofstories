@@ -1,62 +1,93 @@
-export default function Loader() {
+"use client"
+
+import { useState, useMemo } from "react"
+import { X } from "lucide-react"
+
+interface StickyNoteProps {
+  id: string
+  initialContent?: string
+  initialColor?: string
+  initialRotation?: number
+  onDelete?: (id: string) => void
+  editable?: boolean
+  onContentChange?: (content: string) => void
+}
+
+export default function StickyNote({
+  id,
+  initialContent = "Write your note here...",
+  initialColor = "yellow",
+  initialRotation,
+  onDelete,
+  editable = true,
+  onContentChange,
+}: StickyNoteProps) {
+  const [content, setContent] = useState(initialContent)
+  const color = initialColor
+
+  // Calculate rotation only once when component mounts
+  const rotation = useMemo(() => {
+    return initialRotation ?? Math.floor(Math.random() * 10) - 5;
+  }, [initialRotation]);
+
+  const colorMap = {
+    yellow: "bg-yellow-200 hover:bg-yellow-100",
+    blue: "bg-blue-200 hover:bg-blue-100",
+    green: "bg-green-200 hover:bg-green-100",
+    pink: "bg-pink-200 hover:bg-pink-100",
+    purple: "bg-purple-200 hover:bg-purple-100",
+  }
+
+  const isHex = typeof color === 'string' && color.startsWith('#');
+  const bgColor = isHex ? '' : (colorMap[color as keyof typeof colorMap] || colorMap.yellow);
+
   return (
-    <div className="wrapper">
-      <div className="loader"></div>
+    <div
+      className={`relative w-64 h-64 p-6 shadow-md ${bgColor} transition-all duration-200 ease-in-out`}
+      style={{
+        backgroundColor: isHex ? color : undefined,
+        transform: `rotate(${rotation}deg)`,
+        boxShadow: "2px 2px 15px rgba(0,0,0,0.1)",
+      }}
+    >
+      
+      {onDelete && (
+        <button
+          onClick={() => onDelete(id)}
+          className="absolute top-2 right-2 text-black transition-colors"
+          aria-label="Delete note"
+        >
+          <X size={16} />
+        </button>
+      )}
 
-      <style jsx>{`
-        .wrapper {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
-        }
-
-        .loader {
-          display: inline-grid;
-          width: 90px;
-          aspect-ratio: 1;
-          transform: rotate(90deg);
-          animation: l4 1s linear infinite;
-        }
-
-        .loader::before,
-        .loader::after {
-          content: "";
-          grid-area: 1 / 1;
-        }
-
-        .loader::before {
-          clip-path: polygon(
-            100% 50%,90.45% 79.39%,65.45% 97.55%,34.55% 97.55%,9.55% 79.39%,0% 50%,
-            9.55% 20.61%,34.55% 2.45%,65.45% 2.45%,90.45% 20.61%,100% 50%,
-            85.6% 24.14%,63.6% 8.15%,36.4% 8.15%,14.4% 24.14%,6% 50%,
-            14.4% 75.86%,36.4% 91.85%,63.6% 91.85%,85.6% 75.86%,94% 50%,
-            85.6% 24.14%
-          );
-          background: #574951;
-        }
-
-        .loader::after {
-          background: #83988e;
-          clip-path: polygon(
-            100% 50%,65.45% 97.55%,9.55% 79.39%,9.55% 20.61%,65.45% 2.45%
-          );
-          margin: 27%;
-          translate: 46% 0;
-          transform-origin: right;
-          animation: inherit;
-        }
-
-        @keyframes l4 {
-          0% {
-            rotate: 18deg;
+      {/* Content */}
+      {editable ? (
+        <textarea
+          className="placeholder:text-sm w-full h-full bg-transparent resize-none focus:outline-none font-handwriting text-black"
+          value={onContentChange ? (initialContent ?? '') : content}
+          placeholder={
+            "• Add your safe secret 👻\n" +
+            "• Leave a note you always wanted to ✨\n" +
+            "• Type your 3am thoughts… we won't judge 😏\n" +
+            "• Manifest your dreams 💭\n" +
+            "• Scream your wildest idea 👂\n" +
+            "• Drop a truth bomb or tell the world a joke 💣" 
           }
-          100% {
-            rotate: -18deg;
-          }
-        }
-      `}</style>
+          onChange={(e) => {
+            if (onContentChange) {
+              onContentChange(e.target.value);
+            } else {
+              setContent(e.target.value);
+            }
+          }}
+          style={{ fontFamily: "'Comic Sans MS', 'Comic Neue', cursive" }}
+        />
+      ) : (
+        <div className="w-full h-full overflow-auto" style={{ fontFamily: "'Comic Sans MS', 'Comic Neue', cursive", color: 'black' }}>
+          {content}
+        </div>
+      )}
     </div>
-  );
+  )
 }
