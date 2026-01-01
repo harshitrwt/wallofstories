@@ -228,7 +228,7 @@ export default function Home() {
 
   const handleRoomClick = (wall: string, point: THREE.Vector3) => {
     if (localStorage.getItem('hasPostedNote')) {
-      alert('You can only post 2 notes from this device!');
+      alert('You can only post one note from this device!');
       return;
     }
     
@@ -268,7 +268,7 @@ export default function Home() {
       } catch (err: unknown) {
         if (hasResponse(err) && err.response.status === 403) {
           localStorage.setItem('hasPostedNote', 'true');
-          alert('You can only post 2 notes from this device!');
+          alert('You can only post one note from this device!');
         } else {
           alert('An error occurred while posting your note.');
         }
@@ -375,7 +375,7 @@ export default function Home() {
           className="fixed top-6 right-6 z-50 bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl shadow-lg"
           onClick={() => {
             if (localStorage.getItem('hasPostedNote')) {
-              alert('You can only post 2 notes from this device!');
+              alert('You can only post one note from this device!');
               return;
             }
             setClickedWall('front');
