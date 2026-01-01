@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WhisperWall",
-  description: "A place to write your secrets, thoughts, and ideas anonymously.",
+  title: "Wall of Stories",
+  description: "Your secrets, your way",
 };
 
 export default function RootLayout({
