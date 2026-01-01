@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     const alreadyPosted = await Note.findOne({ ip });
     if (alreadyPosted) {
       return NextResponse.json(
-        { error: 'You can only post one note.' },
+        { error: 'You can only post 2 notes max.' },
         { status: 403 }
       );
     }
