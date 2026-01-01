@@ -291,7 +291,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-lg -z-10"></div>
             <div className="relative z-10 pointer-events-auto p-2">
               <h1 className='text-white text-md md:text-xl font-bold'>Welcome to Wall of Stories</h1>
-              <p className='text-white text-xs md:text-sm mb-6'>A virtual space where you can leave anonymous notes on the walls. Share your thoughts, ideas, or messages with others in this collaborative 3D environment. Right-click anywhere on the walls to create a new note</p>
+              <p className='text-white text-xs md:text-sm mb-6'>A virtual space where you can leave anonymous notes on the walls. Share your thoughts, ideas, or messages with others. Right-click anywhere on the walls to create a new note and "double tap to see around".</p>
             </div>
           </div>
         </div>
@@ -322,7 +322,7 @@ export default function Home() {
       {isCreatingNote && (
         <div className="z-[99999] fixed inset-0 flex items-center justify-center" style={{ background: 'transparent' }}>
           <div className="p-6 rounded-lg w-96 flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-4 text-white">Create a Note</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Create Your Note</h2>
             <StickyNote
               id="draft"
               initialContent={newNoteContent}
@@ -339,11 +339,11 @@ export default function Home() {
                 Cancel
               </button>
               <button
-                className="cursor-pointer px-4 py-2 bg-green-500 text-white rounded-lg flex items-center justify-center min-w-[100px]"
+                className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center justify-center min-w-[100px]"
                 onClick={handleCreateNote}
                 disabled={postingNote}
               >
-                {postingNote ? <Loader /> : 'Post Note'}
+                {postingNote ? "Posting..." : 'Post Note'}
               </button>
             </div>
           </div>
