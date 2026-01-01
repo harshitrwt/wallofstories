@@ -35,22 +35,41 @@ const NoteSchema = new mongoose.Schema({
 const Note = (mongoose.models.Note as Model<INote>) || mongoose.model<INote>('Note', NoteSchema);
 
 export async function GET() {
-  await connectToDatabase();
-  const notes = await Note.find({}).lean();
-  return NextResponse.json(notes);
+  try {
+    await connectToDatabase();
+    const notes = await Note.find({}).lean();
+    return NextResponse.json(notes);
+  } catch (error) {
+    console.error('GET /api/notes error:', error);
+    return NextResponse.json({ error: 'Failed to fetch notes' }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') || 'unknown';
-  if (rateLimit(ip, 10, 60 * 1000)) { // 10 requests per minute
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  try {
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
+
+    if (rateLimit(ip, 10, 60 * 1000)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
+    await connectToDatabase();
+
+    const alreadyPosted = await Note.findOne({ ip });
+    if (alreadyPosted) {
+      return NextResponse.json(
+        { error: 'You can only post one note.' },
+        { status: 403 }
+      );
+    }
+
+    const data = await req.json();
+    const note = await Note.create({ ...data, ip });
+
+    return NextResponse.json(note);
+  } catch (error) {
+    console.error('POST /api/notes error:', error);
+    return NextResponse.json({ error: 'Failed to create note' }, { status: 500 });
   }
-  await connectToDatabase();
-  const alreadyPosted = await Note.findOne({ ip });
-  if (alreadyPosted) {
-    return NextResponse.json({ error: 'You can only post one note.' }, { status: 403 });
-  }
-  const data = await req.json();
-  const note = await Note.create({ ...data, ip });
-  return NextResponse.json(note);
-} 
+}
