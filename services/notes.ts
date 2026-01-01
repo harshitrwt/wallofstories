@@ -10,6 +10,11 @@ export async function createNote(note: any) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(note),
   });
-  if (!res.ok) throw new Error('Failed to create note');
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw { response: { status: res.status, message: error.error } };
+  }
+
   return res.json();
-} 
+}

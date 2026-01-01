@@ -19,6 +19,8 @@ interface INote {
   ip: string;
 }
 
+
+const MAX_NOTES_PER_IP = 1;
 const NoteSchema = new mongoose.Schema({
   id: { type: String, required: true },
   content: { type: String, required: true },
@@ -47,8 +49,12 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const forwardedFor = req.headers.get('x-forwarded-for');
-    const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
+    const forwardedFor = req.headers.get('x-forwarded-for');   //updated
+    const ip =
+      forwardedFor?.split(',')[0].trim() ||
+      req.headers.get('x-real-ip') ||
+      'unknown';
+
 
     if (rateLimit(ip, 10, 60 * 1000)) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
@@ -56,13 +62,16 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    const alreadyPosted = await Note.findOne({ ip });
-    if (alreadyPosted) {
+    const noteCount = await Note.countDocuments({ ip });
+
+    // limit notes per IP [updated]
+    if (ip !== 'unknown' && noteCount >= MAX_NOTES_PER_IP) {
       return NextResponse.json(
-        { error: 'You can only post 2 notes max.' },
+        { error: `You can only post ${MAX_NOTES_PER_IP} note(s) from this network.` },
         { status: 403 }
       );
     }
+
 
     const data = await req.json();
     const note = await Note.create({ ...data, ip });

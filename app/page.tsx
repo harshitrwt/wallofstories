@@ -227,10 +227,10 @@ export default function Home() {
   const randomOffset = () => (Math.random() - 0.5) * 10; 
 
   const handleRoomClick = (wall: string, point: THREE.Vector3) => {
-    if (localStorage.getItem('hasPostedNote')) {
-      alert('You can only post one note from this device!');
-      return;
-    }
+    // if (localStorage.getItem('hasPostedNote')) {
+    //   alert('You can only post one note from this device!');
+    //   return;
+    // }
     
     setClickPosition(new THREE.Vector3(
       point.x + (Math.random() - 0.5) * 2, 
@@ -253,7 +253,7 @@ export default function Home() {
       setPostingNote(true);
       try {
         await createNote(newNote);
-        localStorage.setItem('hasPostedNote', 'true');
+        //localStorage.setItem('hasPostedNote', 'true');
         // Refresh notes from API
         const apiNotes = await getNotes();
         setNotes(apiNotes.map((n: Note) => ({
@@ -267,8 +267,9 @@ export default function Home() {
         setClickedWall(null);
       } catch (err: unknown) {
         if (hasResponse(err) && err.response.status === 403) {
-          localStorage.setItem('hasPostedNote', 'true');
-          alert('You can only post one note from this device!');
+          // localStorage.setItem('hasPostedNote', 'true');
+          alert('Posting limit reached.');
+
         } else {
           alert('An error occurred while posting your note.');
         }
@@ -374,10 +375,10 @@ export default function Home() {
         <button
           className="fixed top-6 right-6 z-50 bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl shadow-lg"
           onClick={() => {
-            if (localStorage.getItem('hasPostedNote')) {
-              alert('You can only post one note from this device!');
-              return;
-            }
+            // if (localStorage.getItem('hasPostedNote')) {
+            //   alert('You can only post one note from this device!');
+            //   return;
+            // }
             setClickedWall('front');
             
             setClickPosition(new THREE.Vector3(randomOffset(), randomOffset(), 50 - 0.1));
