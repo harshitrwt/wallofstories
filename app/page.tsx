@@ -291,7 +291,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-lg -z-10"></div>
             <div className="relative z-10 pointer-events-auto p-2">
               <h1 className='text-white text-md md:text-xl font-bold'>Welcome to Wall of Stories</h1>
-              <p className='text-white text-xs md:text-sm mb-6'>A virtual space where you can leave anonymous notes on the walls. Share your thoughts, ideas, or messages with others. Right-click anywhere on the walls to create a new note and "double tap to see around".</p>
+              <p className='text-white text-xs md:text-sm md:mb-6 mb-10'>A virtual space where you can leave anonymous notes on the walls. Share your thoughts, ideas, or perspectives with others. Right-click anywhere on the walls to create a new note and "double tap to see around if using mobile".</p>
             </div>
           </div>
         </div>
