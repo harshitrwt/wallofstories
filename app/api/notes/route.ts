@@ -19,7 +19,7 @@ interface INote {
   ip: string;
 }
 
-const ENABLE_ONE_NOTE_PER_USER = false;
+const ENABLE_ONE_NOTE_PER_USER = true;
 const MAX_NOTES_PER_IP = 1;
 const NoteSchema = new mongoose.Schema({
   id: { type: String, required: true },
