@@ -21,10 +21,11 @@ interface Note {
 
 const STICKY_NOTE_COLORS = ['#FFB6C1', '#FFC0CB', '#FFD700', '#98FB98', '#87CEEB', '#DDA0DD'];
 
+
 function Room({ notes, onWallClick, setOpenNoteId }: { notes: Note[], onWallClick: (wall: string, point: THREE.Vector3) => void, setOpenNoteId: (id: string) => void }) {
   const wallTexture = useTexture('/wall3.png');
   const wallTexture2 = useTexture('/wall2.jpg');
-  const floorTexture = useTexture('/floor.png'); 
+  const floorTexture = useTexture('/floor.png');
 
   // Pre-calculate all note positions and rotations
   const noteTransforms = useMemo(() => {
@@ -32,7 +33,7 @@ function Room({ notes, onWallClick, setOpenNoteId }: { notes: Note[], onWallClic
     const gridSpacing = noteSize + 0.5;
     const wallGridCounters: Record<string, number> = {};
     const transforms = [];
-    const gridCols = 10; 
+    const gridCols = 10;
 
     for (let i = 0; i < notes.length; i++) {
       const note = notes[i];
@@ -40,7 +41,7 @@ function Room({ notes, onWallClick, setOpenNoteId }: { notes: Note[], onWallClic
       let rotation: [number, number, number] = [0, 0, 0];
       const randomRotation = (Math.random() - 0.5) * 0.2;
 
-      
+
       const wallKey = note.wall || 'front';
       if (!wallGridCounters[wallKey]) wallGridCounters[wallKey] = 0;
       const gridIndex = wallGridCounters[wallKey]++;
@@ -77,7 +78,7 @@ function Room({ notes, onWallClick, setOpenNoteId }: { notes: Note[], onWallClic
   const [hoveredNoteId, setHoveredNoteId] = React.useState<string | null>(null);
 
   const handleWallClick = (wall: string) => (event: ThreeEvent<MouseEvent>) => {
-    
+
     if (event.button !== 2) return;
     const mesh = event.object;
     const point = new THREE.Vector3();
@@ -104,7 +105,7 @@ function Room({ notes, onWallClick, setOpenNoteId }: { notes: Note[], onWallClic
         <planeGeometry args={[size, size]} />
         <meshStandardMaterial map={floorTexture} />
       </mesh>
-      
+
       <mesh position={[0, 0, -size / 2]} onContextMenu={handleWallClick('back')}>
         <planeGeometry args={[size, height]} />
         <meshStandardMaterial map={wallTexture} />
@@ -129,9 +130,9 @@ function Room({ notes, onWallClick, setOpenNoteId }: { notes: Note[], onWallClic
         const { position, rotation } = noteTransforms[index];
         return (
           <group key={note.id}>
-            <mesh 
-              position={position} 
-              rotation={rotation} 
+            <mesh
+              position={position}
+              rotation={rotation}
               onClick={() => setOpenNoteId(note.id)}
               onPointerOver={e => {
                 e.stopPropagation();
@@ -155,11 +156,11 @@ function Room({ notes, onWallClick, setOpenNoteId }: { notes: Note[], onWallClic
             </mesh>
             {/* Tooltip above the note*/}
             {hoveredNoteId === note.id && (
-              <Html 
-                position={[position.x, position.y + 1.4, position.z]} 
-                center 
-                style={{ 
-                  pointerEvents: 'none', 
+              <Html
+                position={[position.x, position.y + 1.4, position.z]}
+                center
+                style={{
+                  pointerEvents: 'none',
                   zIndex: 10,
                   transition: 'all 0.2s ease-in-out'
                 }}
@@ -201,6 +202,8 @@ export default function Home() {
   const [openNoteId, setOpenNoteId] = useState<string | null>(null);
   const [loadingNotes, setLoadingNotes] = useState(true);
   const [postingNote, setPostingNote] = useState(false);
+  const [showLimitMessage, setShowLimitMessage] = useState(false);
+
 
   // Detect mobile device
   const isMobile = typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent);
@@ -224,16 +227,16 @@ export default function Home() {
     })();
   }, []);
 
-  const randomOffset = () => (Math.random() - 0.5) * 10; 
+  const randomOffset = () => (Math.random() - 0.5) * 10;
 
   const handleRoomClick = (wall: string, point: THREE.Vector3) => {
     // if (localStorage.getItem('hasPostedNote')) {
     //   alert('You can only post one note from this device!');
     //   return;
     // }
-    
+
     setClickPosition(new THREE.Vector3(
-      point.x + (Math.random() - 0.5) * 2, 
+      point.x + (Math.random() - 0.5) * 2,
       point.y + (Math.random() - 0.5) * 3,
       point.z
     ));
@@ -268,7 +271,7 @@ export default function Home() {
       } catch (err: unknown) {
         if (hasResponse(err) && err.response.status === 403) {
           // localStorage.setItem('hasPostedNote', 'true');
-          alert('Posting limit reached.');
+          setShowLimitMessage(true);
 
         } else {
           alert('An error occurred while posting your note.');
@@ -281,6 +284,7 @@ export default function Home() {
 
   return (
     <main className="w-screen h-screen bg-blue-300 relative">
+
       {/* Total Notes Badge */}
       <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 p-3 bg-black text-white font-bold shadow-lg text-sm">
         {notes.length} note{notes.length !== 1 ? 's' : ''}
@@ -311,7 +315,7 @@ export default function Home() {
         <Room notes={notes} onWallClick={handleRoomClick} setOpenNoteId={setOpenNoteId} />
       </Canvas>
 
-      
+
       {loadingNotes && (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-30">
           <Loader />
@@ -350,7 +354,7 @@ export default function Home() {
         </div>
       )}
 
-      
+
       {openNoteId && (
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'transparent' }}>
           <div className="relative">
@@ -380,7 +384,7 @@ export default function Home() {
             //   return;
             // }
             setClickedWall('front');
-            
+
             setClickPosition(new THREE.Vector3(randomOffset(), randomOffset(), 50 - 0.1));
             setIsCreatingNote(true);
           }}
@@ -399,6 +403,32 @@ export default function Home() {
           <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-50 opacity-80 border-4 border-white shadow-lg">+</div>
         </div>
       )}
+
+
+
+      {showLimitMessage && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40">
+          <div className="relative bg-white rounded-lg p-6 w-[320px] text-center shadow-xl">
+            <button
+              onClick={() => setShowLimitMessage(false)}
+              className="absolute top-3 right-3 text-black hover:opacity-60"
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+
+            <h1 className="text-lg font-semibold text-black mb-2">
+              Thankyou!
+            </h1>
+            <p className="text-sm text-black">
+              You can only post one note.
+              <br />
+              Thanks for sharing 💛
+            </p>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }
