@@ -285,6 +285,29 @@ export default function Home() {
   return (
     <main className="w-screen h-screen bg-blue-300 relative">
 
+      {showLimitMessage && (
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/40">
+          <div className="relative bg-white rounded-lg p-6 w-[320px] text-center shadow-xl">
+            <button
+              onClick={() => setShowLimitMessage(false)}
+              className="absolute top-3 right-3 text-black hover:opacity-60 cursor-pointer"
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+
+            <h1 className="text-lg font-semibold text-black mb-2">
+              Thankyou!
+            </h1>
+            <p className="text-sm text-black">
+              You can only post one note.
+              <br />
+              Thanks for sharing 💛
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Total Notes Badge */}
       <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 p-3 bg-black text-white font-bold shadow-lg text-sm">
         {notes.length} note{notes.length !== 1 ? 's' : ''}
@@ -406,28 +429,7 @@ export default function Home() {
 
 
 
-      {showLimitMessage && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40">
-          <div className="relative bg-white rounded-lg p-6 w-[320px] text-center shadow-xl">
-            <button
-              onClick={() => setShowLimitMessage(false)}
-              className="absolute top-3 right-3 text-black hover:opacity-60"
-              aria-label="Close"
-            >
-              <X size={16} />
-            </button>
-
-            <h1 className="text-lg font-semibold text-black mb-2">
-              Thankyou!
-            </h1>
-            <p className="text-sm text-black">
-              You can only post one note.
-              <br />
-              Thanks for sharing 💛
-            </p>
-          </div>
-        </div>
-      )}
+      
 
     </main>
   );
